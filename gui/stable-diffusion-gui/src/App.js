@@ -1,19 +1,22 @@
 import { Container, Form, Row, Button, Col } from "react-bootstrap";
 import "./App.css";
-import image from "./Assets/image.png";
 import loading from "./Assets/loading.gif";
 import { useState } from "react";
+import Result from "./Components/Result";
 
 function App() {
     const [prompt, setPrompt] = useState("");
-    const [result, setResult] = useState(image);
+    const [showImage, setShowImage] = useState(false);
+    const [promptText, setPromptText] = useState("");
+    const [showLoading, setShowLoading] = useState(false);
 
     const handleChange = (event) => {
         setPrompt(event.target.value);
     };
 
     const prepareImage = () => {
-        setResult(loading);
+        setShowLoading(true);
+        setShowImage(true);
         fetch("http://127.0.0.1:8000/", {
             method: "POST",
             body: JSON.stringify({ prompt: prompt }),
@@ -21,10 +24,10 @@ function App() {
             headers: {
                 "Content-Type": "application/json",
             },
-        }).then(() => {
-            import(`./Assets/image.png`).then((image) => {
-                setResult(image);
-            });
+        }).then((data) => {
+            setShowLoading(false);
+            const newPromptText = prompt;
+            setPromptText(newPromptText);
         });
     };
 
@@ -37,7 +40,12 @@ function App() {
                     </Row>
                     <Row>
                         <Col>
-                            <Form>
+                            <Form
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+                                    prepareImage();
+                                }}
+                            >
                                 <Form.Group
                                     className="mb-3"
                                     controlId="formBasicEmail"
@@ -48,16 +56,35 @@ function App() {
                                         placeholder="Enter prompt"
                                     />
                                 </Form.Group>
-                                <Button
-                                    variant="primary"
-                                    onClick={prepareImage}
-                                >
+                                <Button variant="primary" type="submit">
                                     Submit
                                 </Button>
                             </Form>
                         </Col>
                         <Col>
-                            <img alt="result" src={result} />
+                            {showImage ? (
+                                <Container>
+                                    <Row>
+                                        {showLoading ? (
+                                            <>
+                                                <img src={loading} />
+                                            </>
+                                        ) : (
+                                            <Result promptText={prompt} />
+                                        )}
+                                    </Row>
+                                </Container>
+                            ) : (
+                                <Container>
+                                    <Row>
+                                        <h5 style={{ margin: "25px" }}>
+                                            Please enter a prompt to generate an
+                                            image. <br /> This may take a few
+                                            minutes.
+                                        </h5>
+                                    </Row>
+                                </Container>
+                            )}
                         </Col>
                     </Row>
                 </Container>
