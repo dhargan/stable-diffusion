@@ -1,7 +1,6 @@
 import json
 
-from fastapi import FastAPI, Request, Body
-from pydantic import BaseModel
+from fastapi import FastAPI, Body
 
 app = FastAPI()
 
