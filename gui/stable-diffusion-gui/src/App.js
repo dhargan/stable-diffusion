@@ -70,7 +70,7 @@ function App() {
                                                 <img src={loading} />
                                             </>
                                         ) : (
-                                            <Result promptText={prompt} />
+                                            <Result promptText={promptText} />
                                         )}
                                     </Row>
                                 </Container>
