@@ -125,3 +125,4 @@ dmypy.json
 
 # PyCharm
 .idea/
+gui/stable-diffusion-gui/src/Assets/image.png
