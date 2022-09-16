@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+import json
+
+from fastapi import FastAPI, Request, Body
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -16,10 +19,11 @@ def stable_diffusion(prompt):
     with autocast("cuda"):
         image = pipe(prompt, guidance_scale=7.5).images[0]
 
-    image.save("image.png")
+    image.save("gui/stable-diffusion-gui/src/Assets/image.png")
 
 
-@app.get("/")
-async def root():
-    stable_diffusion("orange, tabby cat, green eyes with sunglasses")
-    return {"message": "Hello World"}
+@app.post("/")
+async def root(prompt: str = Body(...)):
+    prompt = json.loads(prompt)
+    stable_diffusion(prompt["prompt"])
+    return prompt
